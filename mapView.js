@@ -509,104 +509,96 @@ export function createMapView(root, { toast, navigate }) {
     // 收集内容信息以计算画布高度
     const imgCount = Math.min(images.length, 4);
     const scaleFactor = imgCount >= 2 ? 1/3 : 1;
+    const maxImageWidth = 700;
     
-    // 预处理：获取所有图片尺寸
+    // 预处理：获取所有图片尺寸（保持宽高比，不拉伸）
     const processedImages = [];
     for (let i = 0; i < imgCount; i++) {
       const imgData = images[i];
       const imgBitmap = await createImageBitmap(imgData.blob);
-      const scaledWidth = Math.floor(600 * scaleFactor);
-      const imgHeight = Math.min(Math.floor(350 * scaleFactor), Math.floor(imgBitmap.height * (scaledWidth / imgBitmap.width)));
-      processedImages.push({ imgBitmap, scaledWidth, imgHeight });
+      
+      const scaledWidth = Math.min(imgBitmap.width, maxImageWidth * scaleFactor);
+      const scaledHeight = Math.floor(imgBitmap.height * (scaledWidth / imgBitmap.width));
+      
+      processedImages.push({ imgBitmap, scaledWidth, scaledHeight });
     }
     
     // 计算各区域高度
-    const titleAreaHeight = 200;
-    const dividerHeight = 20;
-    const titleAreaEnd = 140 + titleAreaHeight;
-    const dividerY = titleAreaEnd;
-    const imagesStartY = dividerY + dividerHeight + 10;
-    const imagesTotalHeight = processedImages.reduce((sum, img) => sum + img.imgHeight + 30, 0) - 30;
+    const titleAreaHeight = 180;
+    const imagesStartY = 180 + titleAreaHeight + 20;
+    const imagesTotalHeight = processedImages.reduce((sum, img) => sum + img.scaledHeight + 20, 0) - 20;
     const imagesEndY = imagesStartY + imagesTotalHeight;
     
-    // 计算文字区域高度（自适应）
     let noteAreaHeight = 0;
     if (record.note) {
-      const lines = wrapText(ctx, record.note, 600, 28);
+      const lines = wrapText(ctx, record.note, 640, 26);
       const lineCount = Math.min(lines.length, 5);
-      noteAreaHeight = 40 + lineCount * 32 + 30; // padding-top + lines + padding-bottom
+      noteAreaHeight = lineCount * 30 + 40;
     }
     const noteAreaY = imagesEndY + 20;
     const noteAreaEnd = noteAreaY + noteAreaHeight;
     
-    // 底部栏高度
-    const footerHeight = 100;
-    const footerY = noteAreaEnd + 20;
-    const canvasHeight = footerY + footerHeight + 20;
+    const footerHeight = 80;
+    const footerY = noteAreaEnd + 15;
+    const canvasHeight = footerY + footerHeight + 15;
     
-    // 设置画布尺寸
     canvas.width = 800;
-    canvas.height = Math.max(canvasHeight, 1200);
+    canvas.height = canvasHeight;
     
-    // 1. 宝可梦风格背景
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, 800, canvasHeight);
+    // 渐变背景
+    const gradient1 = ctx.createLinearGradient(0, 0, 0, titleAreaHeight + 180);
+    gradient1.addColorStop(0, '#FFF0F0');
+    gradient1.addColorStop(1, '#FFFFFF');
+    ctx.fillStyle = gradient1;
+    ctx.fillRect(0, 0, 800, titleAreaHeight + 180);
     
-    // 添加像素风格边框
-    ctx.strokeStyle = '#333333';
-    ctx.lineWidth = 6;
-    ctx.strokeRect(3, 3, 794, canvasHeight - 6);
-    
-    // 背景网格装饰（像素风格）
+    // 图片区域背景
     ctx.fillStyle = '#F8F9FA';
-    for (let x = 0; x < 800; x += 40) {
-      for (let y = 0; y < canvasHeight; y += 40) {
-        if ((x / 40 + y / 40) % 2 === 0) {
-          ctx.fillRect(x, y, 40, 40);
-        }
-      }
+    ctx.fillRect(0, imagesStartY - 10, 800, imagesTotalHeight + 20);
+    
+    // 文字区域背景
+    if (record.note) {
+      const gradient2 = ctx.createLinearGradient(0, noteAreaY, 0, noteAreaEnd);
+      gradient2.addColorStop(0, '#F0F4FF');
+      gradient2.addColorStop(1, '#E8F0FE');
+      ctx.fillStyle = gradient2;
+      ctx.fillRect(0, noteAreaY, 800, noteAreaHeight);
     }
     
-    // 2. 绘制顶部3个宝可梦角色：妙蛙种子、小火龙、杰尼龟
-    drawBulbasaur(ctx, 200, 80);
-    drawCharmander(ctx, 400, 80);
-    drawSquirtle(ctx, 600, 80);
-    
-    // 3. 标题区域
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(50, 140, 700, titleAreaHeight);
-    ctx.strokeStyle = '#333333';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(50, 140, 700, titleAreaHeight);
-    
-    // 标题文字
+    // 底部栏
     ctx.fillStyle = '#FF4757';
-    ctx.font = 'bold 44px "Courier New", monospace, "Microsoft YaHei"';
+    ctx.fillRect(0, footerY, 800, footerHeight);
+    
+    // 底部文字
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 24px "Courier New", monospace, "Microsoft YaHei"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    drawPixelText(ctx, record.title || '未命名', 400, 200);
+    ctx.fillText('去盖章！GO GO GO', 400, footerY + footerHeight / 2);
+    
+    // 绘制宝可梦角色
+    drawBulbasaur(ctx, 200, 70);
+    drawCharmander(ctx, 400, 70);
+    drawSquirtle(ctx, 600, 70);
+    
+    // 标题
+    ctx.fillStyle = '#FF4757';
+    ctx.font = 'bold 36px "Courier New", monospace, "Microsoft YaHei"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(record.title || '未命名', 400, 200);
     
     // 地址和日期
-    ctx.fillStyle = '#333333';
-    ctx.font = '18px "Courier New", monospace, "Microsoft YaHei"';
+    ctx.fillStyle = '#666666';
+    ctx.font = '16px "Courier New", monospace, "Microsoft YaHei"';
     const locationText = [record.country, record.province, record.city, record.address].filter(Boolean).join(' · ');
-    drawPixelText(ctx, locationText || '旅行印章', 400, 250);
-    drawPixelText(ctx, fmtTime(record.createdAt), 400, 285);
+    ctx.fillText(locationText || '旅行印章', 400, 240);
+    ctx.fillText(fmtTime(record.createdAt), 400, 270);
     
-    // 4. 分割线（像素风格）
-    ctx.strokeStyle = '#333333';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    for (let x = 50; x < 750; x += 20) {
-      ctx.moveTo(x, dividerY);
-      ctx.lineTo(x + 10, dividerY);
-    }
-    ctx.stroke();
-    
-    // 5. 图片区域
+    // 图片（保持宽高比）
     let currentY = imagesStartY;
     for (let i = 0; i < processedImages.length; i++) {
-      const { imgBitmap, scaledWidth, imgHeight } = processedImages[i];
+      const { imgBitmap, scaledWidth, scaledHeight } = processedImages[i];
       
       const imgCanvas = document.createElement('canvas');
       imgCanvas.width = imgBitmap.width;
@@ -614,54 +606,27 @@ export function createMapView(root, { toast, navigate }) {
       const imgCtx = imgCanvas.getContext('2d');
       imgCtx.drawImage(imgBitmap, 0, 0);
       
-      const imgX = imgCount >= 2 ? 100 + (600 - scaledWidth) / 2 : 100;
+      const imgX = (800 - scaledWidth) / 2;
       
-      // 像素风格相框
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(imgX - 8, currentY - 8, scaledWidth + 16, imgHeight + 16);
-      ctx.strokeStyle = '#333333';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(imgX - 4, currentY - 4, scaledWidth + 8, imgHeight + 8);
+      ctx.drawImage(imgCanvas, imgX, currentY, scaledWidth, scaledHeight);
       
-      ctx.drawImage(imgCanvas, imgX, currentY, scaledWidth, imgHeight);
-      
-      currentY += imgHeight + 30;
+      currentY += scaledHeight + 20;
     }
     
-    // 6. 笔记区域（自适应高度）
+    // 笔记（无边框）
     if (record.note) {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(80, noteAreaY, 640, noteAreaHeight);
-      ctx.strokeStyle = '#333333';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(80, noteAreaY, 640, noteAreaHeight);
-      
       ctx.fillStyle = '#55647A';
-      ctx.font = '24px "Courier New", monospace, "Microsoft YaHei"';
+      ctx.font = '20px "Courier New", monospace, "Microsoft YaHei"';
       ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
       
-      const lines = wrapText(ctx, record.note, 600, 28);
-      let textY = noteAreaY + 40;
+      const lines = wrapText(ctx, record.note, 640, 26);
+      let textY = noteAreaY + 20;
       for (const line of lines.slice(0, 5)) {
-        drawPixelText(ctx, line, 100, textY, true);
-        textY += 32;
+        ctx.fillText(line, 80, textY);
+        textY += 30;
       }
     }
-    
-    // 7. 底部宝可梦风格栏
-    ctx.fillStyle = '#FF4757';
-    ctx.fillRect(0, footerY, 800, footerHeight);
-    
-    // 底部像素装饰
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(3, footerY + 3, 794, footerHeight - 6);
-    
-    // 底部文字
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 28px "Courier New", monospace, "Microsoft YaHei"';
-    ctx.textAlign = 'center';
-    drawPixelText(ctx, '去盖章！GO GO GO', 400, footerY + footerHeight / 2);
     
     currentShareCanvas = canvas;
     currentShareRecord = record;
