@@ -693,24 +693,57 @@ export function createMapView(root, { toast, navigate }) {
   function drawBulbasaur(ctx, centerX, centerY) {
     const pixel = 4;
     
-    // 身体 - 绿色
-    ctx.fillStyle = '#78C850';
-    drawPixelRect(ctx, centerX - 6*pixel, centerY - 2*pixel, 12*pixel, 10*pixel);
+    // 身体 - 浅绿色
+    ctx.fillStyle = '#7AC863';
+    drawPixelRect(ctx, centerX - 5*pixel, centerY + 1*pixel, 10*pixel, 9*pixel);
     
-    // 头 - 绿色
-    drawPixelRect(ctx, centerX - 5*pixel, centerY - 6*pixel, 10*pixel, 6*pixel);
+    // 腹部 - 浅黄绿色
+    ctx.fillStyle = '#A8E089';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 2*pixel, 4*pixel, 6*pixel);
     
-    // 眼睛 - 白色和黑色
-    ctx.fillStyle = '#FFFFFF';
-    drawPixelRect(ctx, centerX - 4*pixel, centerY - 5*pixel, 2*pixel, 2*pixel);
-    drawPixelRect(ctx, centerX + 2*pixel, centerY - 5*pixel, 2*pixel, 2*pixel);
+    // 头 - 浅绿色
+    ctx.fillStyle = '#7AC863';
+    drawPixelRect(ctx, centerX - 5*pixel, centerY - 5*pixel, 10*pixel, 7*pixel);
+    
+    // 眼睛眼眶 - 红色
+    ctx.fillStyle = '#FF6B6B';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX + 2*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
+    
+    // 眼睛 - 黑色瞳孔
     ctx.fillStyle = '#000000';
-    drawPixelRect(ctx, centerX - 3*pixel, centerY - 4*pixel, 1*pixel, 1*pixel);
-    drawPixelRect(ctx, centerX + 3*pixel, centerY - 4*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 3*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 3*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
     
-    // 背上的种子 - 深绿色
+    // 嘴巴 - 红色
+    ctx.fillStyle = '#FF4757';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 0*pixel, 4*pixel, 2*pixel);
+    
+    // 背上的种子/花苞 - 深绿色
     ctx.fillStyle = '#5E9E3C';
-    drawPixelRect(ctx, centerX - 2*pixel, centerY - 8*pixel, 4*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX - 3*pixel, centerY - 10*pixel, 6*pixel, 6*pixel);
+    
+    // 种子纹理
+    ctx.fillStyle = '#4A8C33';
+    drawPixelRect(ctx, centerX - 1*pixel, centerY - 9*pixel, 2*pixel, 4*pixel);
+    
+    // 身上的斑点
+    ctx.fillStyle = '#5E9E3C';
+    drawPixelRect(ctx, centerX + 3*pixel, centerY - 2*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX + 4*pixel, centerY + 1*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX + 4*pixel, centerY + 4*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 1*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 4*pixel, 1*pixel, 1*pixel);
+    
+    // 手臂
+    ctx.fillStyle = '#7AC863';
+    drawPixelRect(ctx, centerX + 5*pixel, centerY + 1*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX - 7*pixel, centerY + 1*pixel, 2*pixel, 3*pixel);
+    
+    // 脚
+    ctx.fillStyle = '#7AC863';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
   }
   
   // 绘制小火龙
@@ -719,50 +752,121 @@ export function createMapView(root, { toast, navigate }) {
     
     // 身体 - 橙色
     ctx.fillStyle = '#F08030';
-    drawPixelRect(ctx, centerX - 5*pixel, centerY - 2*pixel, 10*pixel, 10*pixel);
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 1*pixel, 8*pixel, 9*pixel);
+    
+    // 腹部 - 黄色
+    ctx.fillStyle = '#FDD835';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 2*pixel, 4*pixel, 6*pixel);
     
     // 头 - 橙色
-    drawPixelRect(ctx, centerX - 4*pixel, centerY - 6*pixel, 8*pixel, 6*pixel);
+    ctx.fillStyle = '#F08030';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY - 5*pixel, 8*pixel, 7*pixel);
     
-    // 眼睛 - 白色和黑色
+    // 眼睛眼眶 - 白色
     ctx.fillStyle = '#FFFFFF';
-    drawPixelRect(ctx, centerX - 3*pixel, centerY - 5*pixel, 2*pixel, 2*pixel);
-    drawPixelRect(ctx, centerX + 1*pixel, centerY - 5*pixel, 2*pixel, 2*pixel);
-    ctx.fillStyle = '#000000';
-    drawPixelRect(ctx, centerX - 2*pixel, centerY - 4*pixel, 1*pixel, 1*pixel);
-    drawPixelRect(ctx, centerX + 2*pixel, centerY - 4*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 3*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
     
-    // 尾巴火焰 - 黄色和红色
-    ctx.fillStyle = '#FFD700';
-    drawPixelRect(ctx, centerX + 5*pixel, centerY - 1*pixel, 2*pixel, 4*pixel);
+    // 眼睛 - 蓝色瞳孔
+    ctx.fillStyle = '#607D8B';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 2*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
+    
+    // 嘴巴 - 红色
     ctx.fillStyle = '#FF4757';
-    drawPixelRect(ctx, centerX + 6*pixel, centerY - 2*pixel, 1*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 0*pixel, 4*pixel, 2*pixel);
+    
+    // 牙齿 - 白色
+    ctx.fillStyle = '#FFFFFF';
+    drawPixelRect(ctx, centerX - 3*pixel, centerY + 0*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 1*pixel, centerY + 0*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY + 0*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX + 3*pixel, centerY + 0*pixel, 1*pixel, 1*pixel);
+    
+    // 手臂
+    ctx.fillStyle = '#F08030';
+    drawPixelRect(ctx, centerX + 4*pixel, centerY + 0*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX - 6*pixel, centerY + 0*pixel, 2*pixel, 3*pixel);
+    
+    // 脚
+    ctx.fillStyle = '#F08030';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
+    
+    // 尾巴
+    ctx.fillStyle = '#F08030';
+    drawPixelRect(ctx, centerX - 5*pixel, centerY + 4*pixel, 3*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX - 8*pixel, centerY + 3*pixel, 3*pixel, 3*pixel);
+    
+    // 尾巴火焰 - 黄色
+    ctx.fillStyle = '#FFD700';
+    drawPixelRect(ctx, centerX - 11*pixel, centerY + 0*pixel, 3*pixel, 4*pixel);
+    
+    // 火焰核心 - 红色
+    ctx.fillStyle = '#FF4757';
+    drawPixelRect(ctx, centerX - 12*pixel, centerY + 0*pixel, 2*pixel, 3*pixel);
   }
   
   // 绘制杰尼龟
   function drawSquirtle(ctx, centerX, centerY) {
     const pixel = 4;
     
-    // 龟壳 - 棕色
-    ctx.fillStyle = '#A0826D';
-    drawPixelRect(ctx, centerX - 6*pixel, centerY - 4*pixel, 12*pixel, 12*pixel);
+    // 身体 - 蓝色
+    ctx.fillStyle = '#6890F0';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 2*pixel, 8*pixel, 8*pixel);
     
-    // 壳纹 - 深棕色
-    ctx.fillStyle = '#806050';
-    drawPixelRect(ctx, centerX - 1*pixel, centerY - 3*pixel, 2*pixel, 10*pixel);
-    drawPixelRect(ctx, centerX - 5*pixel, centerY - 1*pixel, 10*pixel, 2*pixel);
+    // 腹部 - 浅米色
+    ctx.fillStyle = '#F5E6D3';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 3*pixel, 4*pixel, 5*pixel);
     
     // 头 - 蓝色
     ctx.fillStyle = '#6890F0';
-    drawPixelRect(ctx, centerX - 4*pixel, centerY - 7*pixel, 8*pixel, 5*pixel);
+    drawPixelRect(ctx, centerX - 4*pixel, centerY - 5*pixel, 8*pixel, 7*pixel);
     
-    // 眼睛 - 白色和黑色
-    ctx.fillStyle = '#FFFFFF';
-    drawPixelRect(ctx, centerX - 3*pixel, centerY - 6*pixel, 2*pixel, 2*pixel);
-    drawPixelRect(ctx, centerX + 1*pixel, centerY - 6*pixel, 2*pixel, 2*pixel);
+    // 眼睛眼眶 - 紫色
+    ctx.fillStyle = '#B39DDB';
+    drawPixelRect(ctx, centerX - 3*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY - 4*pixel, 2*pixel, 3*pixel);
+    
+    // 眼睛 - 黑色瞳孔
     ctx.fillStyle = '#000000';
-    drawPixelRect(ctx, centerX - 2*pixel, centerY - 5*pixel, 1*pixel, 1*pixel);
-    drawPixelRect(ctx, centerX + 2*pixel, centerY - 5*pixel, 1*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 2*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 2*pixel, centerY - 3*pixel, 1*pixel, 2*pixel);
+    
+    // 嘴巴 - 微笑
+    ctx.fillStyle = '#263238';
+    drawPixelRect(ctx, centerX - 2*pixel, centerY + 1*pixel, 4*pixel, 2*pixel);
+    
+    // 龟壳 - 棕色
+    ctx.fillStyle = '#A0826D';
+    drawPixelRect(ctx, centerX - 6*pixel, centerY - 1*pixel, 12*pixel, 10*pixel);
+    
+    // 壳纹 - 深棕色线条
+    ctx.fillStyle = '#806050';
+    drawPixelRect(ctx, centerX - 1*pixel, centerY - 1*pixel, 2*pixel, 9*pixel);
+    drawPixelRect(ctx, centerX - 5*pixel, centerY + 2*pixel, 10*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX - 5*pixel, centerY + 5*pixel, 10*pixel, 2*pixel);
+    
+    // 壳边框
+    ctx.fillStyle = '#6D4C41';
+    drawPixelRect(ctx, centerX - 6*pixel, centerY - 1*pixel, 12*pixel, 1*pixel);
+    drawPixelRect(ctx, centerX - 6*pixel, centerY + 8*pixel, 12*pixel, 1*pixel);
+    
+    // 手臂
+    ctx.fillStyle = '#6890F0';
+    drawPixelRect(ctx, centerX + 4*pixel, centerY + 1*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX - 6*pixel, centerY + 1*pixel, 2*pixel, 3*pixel);
+    
+    // 脚
+    ctx.fillStyle = '#6890F0';
+    drawPixelRect(ctx, centerX - 4*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 1*pixel, centerY + 9*pixel, 3*pixel, 2*pixel);
+    
+    // 尾巴 - 卷曲形状
+    ctx.fillStyle = '#6890F0';
+    drawPixelRect(ctx, centerX + 4*pixel, centerY + 5*pixel, 2*pixel, 3*pixel);
+    drawPixelRect(ctx, centerX + 6*pixel, centerY + 3*pixel, 3*pixel, 2*pixel);
+    drawPixelRect(ctx, centerX + 6*pixel, centerY + 5*pixel, 2*pixel, 2*pixel);
   }
   
   // 像素绘制辅助函数

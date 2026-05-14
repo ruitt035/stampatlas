@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宝可梦像素图生成器</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background: #f0f0f0;
+      text-align: center;
+      padding: 20px;
+    }
+    canvas {
+      border: 4px solid #333;
+      background: #fff;
+      image-rendering: pixelated;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #FFD700;
+      border: 3px solid #333;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #333;
+      font-weight: bold;
+    }
+    button:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 #333;
+    }
+    .download-btn {
+      background: #FF4757;
+      color: white;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .character {
+      text-align: center;
+    }
+    .character h3 {
+      margin-top: 10px;
+      color: #333;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>宝可梦御三家 - 像素风格</h1>
+  <p>点击下载按钮保存像素风格图片</p>
+  
+  <div class="container">
+    <div class="character">
+      <canvas id="bulbasaur" width="120" height="160"></canvas>
+      <h3>妙蛙种子</h3>
+    </div>
+    <div class="character">
+      <canvas id="charmander" width="120" height="160"></canvas>
+      <h3>小火龙</h3>
+    </div>
+    <div class="character">
+      <canvas id="squirtle" width="120" height="160"></canvas>
+      <h3>杰尼龟</h3>
+    </div>
+  </div>
+  
+  <div class="container">
+    <button onclick="downloadImage('bulbasaur', 'bulbasaur-pixel.png')" class="download-btn">下载妙蛙种子</button>
+    <button onclick="downloadImage('charmander', 'charmander-pixel.png')" class="download-btn">下载小火龙</button>
+    <button onclick="downloadImage('squirtle', 'squirtle-pixel.png')" class="download-btn">下载杰尼龟</button>
+  </div>
+
+  <script>
+    const pixel = 4;
+
+    function drawPixelRect(ctx, x, y, w, h) {
+      ctx.fillRect(Math.floor(x), Math.floor(y), w, h);
+    }
+
+    // 绘制妙蛙种子
+    function drawBulbasaur(ctx) {
+      ctx.clearRect(0, 0, 120, 160);
+      const cx = 60;
+      const cy = 80;
+      
+      ctx.fillStyle = '#7AC863';
+      drawPixelRect(ctx, cx - 5*pixel, cy + 1*pixel, 10*pixel, 9*pixel);
+      
+      ctx.fillStyle = '#A8E089';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 2*pixel, 4*pixel, 6*pixel);
+      
+      ctx.fillStyle = '#7AC863';
+      drawPixelRect(ctx, cx - 5*pixel, cy - 5*pixel, 10*pixel, 7*pixel);
+      
+      ctx.fillStyle = '#FF6B6B';
+      drawPixelRect(ctx, cx - 4*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx + 2*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#000000';
+      drawPixelRect(ctx, cx - 3*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 3*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#FF4757';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 0*pixel, 4*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#5E9E3C';
+      drawPixelRect(ctx, cx - 3*pixel, cy - 10*pixel, 6*pixel, 6*pixel);
+      
+      ctx.fillStyle = '#4A8C33';
+      drawPixelRect(ctx, cx - 1*pixel, cy - 9*pixel, 2*pixel, 4*pixel);
+      
+      ctx.fillStyle = '#5E9E3C';
+      drawPixelRect(ctx, cx + 3*pixel, cy - 2*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx + 4*pixel, cy + 1*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx + 4*pixel, cy + 4*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx - 4*pixel, cy + 1*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx - 4*pixel, cy + 4*pixel, 1*pixel, 1*pixel);
+      
+      ctx.fillStyle = '#7AC863';
+      drawPixelRect(ctx, cx + 5*pixel, cy + 1*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx - 7*pixel, cy + 1*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#7AC863';
+      drawPixelRect(ctx, cx - 4*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+    }
+
+    // 绘制小火龙
+    function drawCharmander(ctx) {
+      ctx.clearRect(0, 0, 120, 160);
+      const cx = 60;
+      const cy = 80;
+      
+      ctx.fillStyle = '#F08030';
+      drawPixelRect(ctx, cx - 4*pixel, cy + 1*pixel, 8*pixel, 9*pixel);
+      
+      ctx.fillStyle = '#FDD835';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 2*pixel, 4*pixel, 6*pixel);
+      
+      ctx.fillStyle = '#F08030';
+      drawPixelRect(ctx, cx - 4*pixel, cy - 5*pixel, 8*pixel, 7*pixel);
+      
+      ctx.fillStyle = '#FFFFFF';
+      drawPixelRect(ctx, cx - 3*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#607D8B';
+      drawPixelRect(ctx, cx - 2*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 2*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#FF4757';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 0*pixel, 4*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#FFFFFF';
+      drawPixelRect(ctx, cx - 3*pixel, cy + 0*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx - 1*pixel, cy + 0*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy + 0*pixel, 1*pixel, 1*pixel);
+      drawPixelRect(ctx, cx + 3*pixel, cy + 0*pixel, 1*pixel, 1*pixel);
+      
+      ctx.fillStyle = '#F08030';
+      drawPixelRect(ctx, cx + 4*pixel, cy + 0*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx - 6*pixel, cy + 0*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#F08030';
+      drawPixelRect(ctx, cx - 4*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#F08030';
+      drawPixelRect(ctx, cx - 5*pixel, cy + 4*pixel, 3*pixel, 2*pixel);
+      drawPixelRect(ctx, cx - 8*pixel, cy + 3*pixel, 3*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#FFD700';
+      drawPixelRect(ctx, cx - 11*pixel, cy + 0*pixel, 3*pixel, 4*pixel);
+      
+      ctx.fillStyle = '#FF4757';
+      drawPixelRect(ctx, cx - 12*pixel, cy + 0*pixel, 2*pixel, 3*pixel);
+    }
+
+    // 绘制杰尼龟
+    function drawSquirtle(ctx) {
+      ctx.clearRect(0, 0, 120, 160);
+      const cx = 60;
+      const cy = 80;
+      
+      ctx.fillStyle = '#6890F0';
+      drawPixelRect(ctx, cx - 4*pixel, cy + 2*pixel, 8*pixel, 8*pixel);
+      
+      ctx.fillStyle = '#F5E6D3';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 3*pixel, 4*pixel, 5*pixel);
+      
+      ctx.fillStyle = '#6890F0';
+      drawPixelRect(ctx, cx - 4*pixel, cy - 5*pixel, 8*pixel, 7*pixel);
+      
+      ctx.fillStyle = '#B39DDB';
+      drawPixelRect(ctx, cx - 3*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy - 4*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#000000';
+      drawPixelRect(ctx, cx - 2*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 2*pixel, cy - 3*pixel, 1*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#263238';
+      drawPixelRect(ctx, cx - 2*pixel, cy + 1*pixel, 4*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#A0826D';
+      drawPixelRect(ctx, cx - 6*pixel, cy - 1*pixel, 12*pixel, 10*pixel);
+      
+      ctx.fillStyle = '#806050';
+      drawPixelRect(ctx, cx - 1*pixel, cy - 1*pixel, 2*pixel, 9*pixel);
+      drawPixelRect(ctx, cx - 5*pixel, cy + 2*pixel, 10*pixel, 2*pixel);
+      drawPixelRect(ctx, cx - 5*pixel, cy + 5*pixel, 10*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#6D4C41';
+      drawPixelRect(ctx, cx - 6*pixel, cy - 1*pixel, 12*pixel, 1*pixel);
+      drawPixelRect(ctx, cx - 6*pixel, cy + 8*pixel, 12*pixel, 1*pixel);
+      
+      ctx.fillStyle = '#6890F0';
+      drawPixelRect(ctx, cx + 4*pixel, cy + 1*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx - 6*pixel, cy + 1*pixel, 2*pixel, 3*pixel);
+      
+      ctx.fillStyle = '#6890F0';
+      drawPixelRect(ctx, cx - 4*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 1*pixel, cy + 9*pixel, 3*pixel, 2*pixel);
+      
+      ctx.fillStyle = '#6890F0';
+      drawPixelRect(ctx, cx + 4*pixel, cy + 5*pixel, 2*pixel, 3*pixel);
+      drawPixelRect(ctx, cx + 6*pixel, cy + 3*pixel, 3*pixel, 2*pixel);
+      drawPixelRect(ctx, cx + 6*pixel, cy + 5*pixel, 2*pixel, 2*pixel);
+    }
+
+    function downloadImage(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // 初始化绘制
+    drawBulbasaur(document.getElementById('bulbasaur').getContext('2d'));
+    drawCharmander(document.getElementById('charmander').getContext('2d'));
+    drawSquirtle(document.getElementById('squirtle').getContext('2d'));
+  </script>
+</body>
+</html>
