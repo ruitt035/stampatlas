@@ -1110,6 +1110,17 @@ export function createMapView(root, { toast, navigate }) {
         refreshRecordsPanel();
         return;
       }
+      
+      // 检查是否点击了编辑按钮或复选框，如果是则不打开详情
+      if (t.closest?.('[data-edit]') || t.classList.contains('batchCheckbox')) {
+        return;
+      }
+      
+      // 批量模式下不打开详情页
+      if (batchMode) {
+        return;
+      }
+      
       const row = t.closest?.('[data-id]');
       if (!row) return;
       openRecord(row.getAttribute('data-id'));
