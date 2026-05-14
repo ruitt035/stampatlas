@@ -18,16 +18,22 @@ export function createMapView(root, { toast, navigate }) {
         <div class="recordsHeader">
           <div class="metaLine">
           <div class="hTitle">盖章记录</div>
-          <div class="hint">点击地图添加标记</div>
+          <div class="hint" data-hint>点击地图添加标记</div>
           </div>
-          <div class="recordsHeaderActions">
+          <div class="recordsHeaderActions" data-normal-actions>
             <button class="btn btnTight" data-sort type="button" title="时间排序">${icon("sort")}<span data-sort-label></span></button>
             <select class="selectTight" data-group title="分类">
               <option value="none">不分类</option>
               <option value="country">国家</option>
               <option value="province">省份</option>
             </select>
+            <button class="btn btnTight btnDanger" data-batch-delete type="button" title="批量删除">${icon("trash")}批量</button>
             <button class="btn btnTight" data-close-records type="button" title="关闭">${icon("close")}</button>
+          </div>
+          <div class="recordsHeaderActions" data-batch-actions style="display:none">
+            <span class="batchCount" data-batch-count>已选 0 项</span>
+            <button class="btn btnTight btnDanger" data-delete-selected type="button">${icon("trash")}删除</button>
+            <button class="btn btnTight" data-cancel-batch type="button">${icon("close")}取消</button>
           </div>
         </div>
         <div class="recordsFilters">
@@ -144,6 +150,14 @@ export function createMapView(root, { toast, navigate }) {
   const shareCloseBtn = root.querySelector("[data-share-close]");
   const shareDownloadBtn = root.querySelector("[data-share-download]");
 
+  const normalActionsEl = root.querySelector("[data-normal-actions]");
+  const batchActionsEl = root.querySelector("[data-batch-actions]");
+  const hintEl = root.querySelector("[data-hint]");
+  const batchCountEl = root.querySelector("[data-batch-count]");
+  const batchDeleteBtn = root.querySelector("[data-batch-delete]");
+  const deleteSelectedBtn = root.querySelector("[data-delete-selected]");
+  const cancelBatchBtn = root.querySelector("[data-cancel-batch]");
+
   let map = null;
   let geocoder = null;
   let geolocation = null;
@@ -159,6 +173,8 @@ export function createMapView(root, { toast, navigate }) {
   let stampIcon = null;
   let currentShareCanvas = null;
   let currentShareRecord = null;
+  let batchMode = false;
+  let selectedIds = new Set();
 
   function setDrawer(open) {
     drawerOpen = open;
@@ -232,14 +248,14 @@ export function createMapView(root, { toast, navigate }) {
                 <span class="groupMeta">${items.length}</span>
               </button>
               <div class="groupBody ${open ? "isOpen" : ""}" data-group-body="${escapeAttr(key)}">
-                ${items.map((r) => rowHtml(r)).join("")}
+                ${items.map((r) => rowHtml(r, batchMode, selectedIds.has(r.id))).join("")}
               </div>
             </div>
           `;
         })
         .join("");
     } else {
-      recordsListEl.innerHTML = show.map((r) => rowHtml(r)).join("");
+      recordsListEl.innerHTML = show.map((r) => rowHtml(r, batchMode, selectedIds.has(r.id))).join("");
     }
 
     const rows = Array.from(recordsListEl.querySelectorAll("[data-id]"));
@@ -1105,6 +1121,127 @@ export function createMapView(root, { toast, navigate }) {
       refreshRecordsPanel();
     });
 
+    // 批量删除按钮
+    batchDeleteBtn.addEventListener('click', () => {
+      setBatchMode(true);
+    });
+
+    // 删除选中项
+    deleteSelectedBtn.addEventListener('click', async () => {
+      if (selectedIds.size === 0) {
+        toast('请先选择要删除的记录');
+        return;
+      }
+      if (!confirm(`确定要删除选中的 ${selectedIds.size} 条记录吗？`)) {
+        return;
+      }
+      for (const id of selectedIds) {
+        await deleteRecord(id);
+        const marker = markers.get(id);
+        if (marker) {
+          map.removeOverlay(marker);
+          markers.delete(id);
+        }
+      }
+      toast(`已删除 ${selectedIds.size} 条记录`);
+      setBatchMode(false);
+      await refreshRecordsPanel();
+    });
+
+    // 取消批量选择
+    cancelBatchBtn.addEventListener('click', () => {
+      setBatchMode(false);
+    });
+
+    // 批量模式切换函数
+    function setBatchMode(enabled) {
+      batchMode = enabled;
+      if (!enabled) {
+        selectedIds.clear();
+      }
+      normalActionsEl.style.display = enabled ? 'none' : 'flex';
+      batchActionsEl.style.display = enabled ? 'flex' : 'none';
+      hintEl.textContent = enabled ? '勾选要删除的记录' : '点击地图添加标记';
+      refreshRecordsPanel();
+    }
+
+    // 批量选择 - 复选框点击
+    recordsListEl.addEventListener('change', async (e) => {
+      if (e.target.classList.contains('batchCheckbox')) {
+        const id = e.target.getAttribute('data-checkbox');
+        if (e.target.checked) {
+          selectedIds.add(id);
+        } else {
+          selectedIds.delete(id);
+        }
+        batchCountEl.textContent = `已选 ${selectedIds.size} 项`;
+      }
+    });
+
+    // 快速重命名 - 开始编辑
+    async function startEditingTitle(id) {
+      const titleEl = recordsListEl.querySelector(`[data-row-title="${id}"]`);
+      if (!titleEl) return;
+
+      const record = await getById(id);
+      if (!record) return;
+
+      const currentTitle = record.title || '未命名';
+
+      // 隐藏文本，显示输入框
+      titleEl.innerHTML = '';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'titleEditInput';
+      input.value = currentTitle;
+      input.maxLength = 60;
+      titleEl.appendChild(input);
+      input.focus();
+      input.select();
+
+      // 保存函数
+      const saveTitle = async () => {
+        const newTitle = input.value.trim() || currentTitle;
+        if (newTitle !== currentTitle) {
+          record.title = newTitle;
+          await putRecord(record);
+
+          // 更新地图标记
+          const marker = markers.get(id);
+          if (marker) {
+            marker.setTitle(newTitle);
+          }
+
+          toast('标题已更新');
+        }
+        await refreshRecordsPanel();
+      };
+
+      // 回车保存
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveTitle();
+        }
+        if (e.key === 'Escape') {
+          refreshRecordsPanel();
+        }
+      });
+
+      // 失去焦点保存
+      input.addEventListener('blur', saveTitle);
+    }
+
+    // 快速重命名 - 编辑按钮点击
+    recordsListEl.addEventListener('click', (e) => {
+      const editBtn = e.target.closest('[data-edit]');
+      if (editBtn && !batchMode) {
+        e.stopPropagation();
+        const id = editBtn.getAttribute('data-edit');
+        startEditingTitle(id);
+      }
+    });
+
     groupEl.addEventListener('change', () => {
       collapsedGroups = new Set();
       refreshRecordsPanel();
@@ -1175,12 +1312,23 @@ function escapeAttr(s) {
   return String(s ?? '').replaceAll('"', '&quot;');
 }
 
-function rowHtml(r) {
+function rowHtml(r, isBatchMode = false, isSelected = false) {
+  const editIcon = icon("edit");
+  const checkbox = isBatchMode 
+    ? `<input type="checkbox" class="batchCheckbox" data-checkbox="${r.id}" ${isSelected ? 'checked' : ''} />` 
+    : '';
+  
   return `
-    <div class="row" role="listitem" data-id="${r.id}">
-      <div style="min-width:0">
-        <div class="rowTitle">${escapeHtml(r.title || '未命名')}</div>
-        <div class="rowSub">${escapeHtml(r.address || fmtTime(r.createdAt))}</div>
+    <div class="row" role="listitem" data-id="${r.id}" data-title="${escapeAttr(r.title || '未命名')}">
+      ${checkbox}
+      <div style="min-width:0; display:flex; align-items:center; gap:8px; flex:1;">
+        <div style="min-width:0; flex:1;">
+          <div class="rowTitle" data-row-title="${r.id}">
+            ${escapeHtml(r.title || '未命名')}
+            <button class="editBtn" data-edit="${r.id}" title="编辑名称" type="button">${editIcon}</button>
+          </div>
+          <div class="rowSub">${escapeHtml(r.address || fmtTime(r.createdAt))}</div>
+        </div>
       </div>
       <div class="rowThumbs" data-thumbs="${r.id}"></div>
     </div>

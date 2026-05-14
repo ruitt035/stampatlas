@@ -1002,3 +1002,74 @@ html, body {
     background: transparent;
   }
 }
+
+/* 批量删除样式 */
+.batchCount {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  padding: 6px 12px;
+  background: var(--pk-yellow);
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+}
+
+.batchCheckbox {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: var(--pk-red);
+  margin-right: 8px;
+}
+
+/* 快速重命名样式 */
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-left: 8px;
+  border: 2px solid var(--pk-dark);
+  border-radius: 4px;
+  background: var(--pk-yellow);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  opacity: 0.6;
+  vertical-align: middle;
+}
+
+.editBtn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: linear-gradient(180deg, var(--pk-yellow) 0%, #FFA500 100%);
+}
+
+.editBtn:active {
+  transform: scale(0.95);
+}
+
+.editBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.titleEditInput {
+  height: 32px;
+  padding: 0 8px;
+  border: 2px solid var(--pk-yellow);
+  border-radius: 4px;
+  background: var(--pk-white);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  outline: none;
+  min-width: 150px;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+}
+
+.titleEditInput:focus {
+  border-color: var(--pk-red);
+  box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
+}
