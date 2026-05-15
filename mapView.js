@@ -1093,15 +1093,12 @@ export function createMapView(root, { toast, navigate }) {
   async function runStampCelebration() {
     const state = loadNoticeState();
     if (state.muted) {
-      toast('已保存');
       return;
     }
     if (state.count === 0) {
       state.count += 1;
       saveNoticeState(state);
       showStampOverlay({ showMute: true });
-    } else {
-      toast('已保存');
     }
   }
 
