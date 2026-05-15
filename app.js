@@ -1,6 +1,7 @@
 import { icon } from "./icons.js"
 import { createMapView } from "./mapView.js"
 import { createSettingsView } from "./settingsView.js"
+import { createCalendarView } from "./calendarView.js"
 
 const appEl = document.getElementById("app")
 
@@ -13,14 +14,16 @@ appEl.innerHTML = `
       </div>
       <div class="nav">
         <button class="btn btnPrimary" data-nav="map" title="地图">${icon("pin")}地图</button>
+        <button class="btn" data-nav="calendar" title="日历">${icon("calendar")}日历</button>
         <button class="btn" data-nav="settings" title="设置">${icon("settings")}设置</button>
       </div>
     </div>
     <div class="content">
-      <div id="view-map" class="view"></div>
-      <div id="view-settings" class="view"></div>
-      <div id="toast" class="toast"></div>
-    </div>
+        <div id="view-map" class="view"></div>
+        <div id="view-settings" class="view"></div>
+        <div id="view-calendar"></div>
+        <div id="toast" class="toast"></div>
+      </div>
   </div>
 `
 
@@ -36,14 +39,18 @@ export function toast(msg, { ms = 1800 } = {}) {
 
 const mapRoot = document.getElementById("view-map")
 const settingsRoot = document.getElementById("view-settings")
+const calendarRoot = document.getElementById("view-calendar")
 
 const mapView = createMapView(mapRoot, { toast, navigate })
 const settingsView = createSettingsView(settingsRoot, { toast, navigate })
+const calendarView = createCalendarView(calendarRoot)
 
 function setActive(name) {
   document.querySelectorAll(".view").forEach((v) => v.classList.remove("isActive"))
   const el = document.getElementById(`view-${name}`)
-  el.classList.add("isActive")
+  if (el) {
+    el.classList.add("isActive")
+  }
   document.querySelectorAll("[data-nav]").forEach((b) => {
     const on = b.getAttribute("data-nav") === name
     b.classList.toggle("btnPrimary", on)
@@ -64,6 +71,14 @@ async function syncViews(route) {
   }
 }
 
+function handleNavClick(name) {
+  if (name === "calendar") {
+    calendarView.open()
+  } else {
+    navigate(name)
+  }
+}
+
 function routeFromHash() {
   const h = (location.hash || "#/").replace(/^#\//, "")
   if (h.startsWith("settings")) return "settings"
@@ -71,7 +86,7 @@ function routeFromHash() {
 }
 
 document.querySelectorAll("[data-nav]").forEach((b) => {
-  b.addEventListener("click", () => navigate(b.getAttribute("data-nav")))
+  b.addEventListener("click", () => handleNavClick(b.getAttribute("data-nav")))
 })
 
 window.addEventListener("hashchange", () => syncViews(routeFromHash()))
