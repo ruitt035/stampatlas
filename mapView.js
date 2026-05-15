@@ -18,20 +18,24 @@ export function createMapView(root, { toast, navigate }) {
         <div class="recordsHeader">
           <div class="hTitle">盖章记录</div>
           <div class="recordsHeaderActions" data-normal-actions>
-            <button class="btn btnTight" data-sort type="button" title="时间排序">${icon("sort")}<span data-sort-label></span></button>
-            <select class="selectTight" data-group title="分类">
+            <button class="btn btnTight btnSmall" data-sort type="button" title="时间排序">${icon("sort")}<span data-sort-label></span></button>
+            <select class="selectTight selectSmall" data-group title="分类">
               <option value="none">不分类</option>
               <option value="country">国家</option>
               <option value="province">省份</option>
             </select>
-            <button class="btn btnTight btnDanger" data-batch-delete type="button" title="批量删除">${icon("trash")}批量</button>
-            <button class="btn btnTight" data-close-records type="button" title="关闭">${icon("close")}</button>
+            <button class="btn btnTight btnDanger btnSmall" data-batch-delete type="button" title="批量删除">${icon("trash")}批量</button>
+            <button class="btn btnTight btnSmall" data-close-records type="button" title="关闭">${icon("close")}</button>
           </div>
           <div class="recordsHeaderActions" data-batch-actions style="display:none">
             <span class="batchCount" data-batch-count>已选 0 项</span>
             <button class="btn btnTight btnDanger" data-delete-selected type="button">${icon("trash")}删除</button>
             <button class="btn btnTight" data-cancel-batch type="button">${icon("close")}取消</button>
           </div>
+        </div>
+        <div class="statsPanel" data-stats-panel>
+          <div class="statsIcon">⭐</div>
+          <div class="statsText">总打卡数：<span class="statsCount" data-stats-count>0</span></div>
         </div>
         <div class="recordsFilters">
           <input class="search" data-records-search placeholder="搜索记录" />
@@ -153,6 +157,8 @@ export function createMapView(root, { toast, navigate }) {
   const batchDeleteBtn = root.querySelector("[data-batch-delete]");
   const deleteSelectedBtn = root.querySelector("[data-delete-selected]");
   const cancelBatchBtn = root.querySelector("[data-cancel-batch]");
+  const statsPanelEl = root.querySelector("[data-stats-panel]");
+  const statsCountEl = root.querySelector("[data-stats-count]");
 
   let map = null;
   let geocoder = null;
@@ -171,6 +177,7 @@ export function createMapView(root, { toast, navigate }) {
   let currentShareRecord = null;
   let batchMode = false;
   let selectedIds = new Set();
+  let lastRecordCount = 0;
 
   function setDrawer(open) {
     drawerOpen = open;
@@ -188,11 +195,75 @@ export function createMapView(root, { toast, navigate }) {
     recordsPanelEl.classList.toggle("isOpen", open);
     recordsBackdropEl.classList.toggle("isOpen", open);
     recordsPanelEl.setAttribute("aria-hidden", String(!open));
+    if (open) {
+      updateStats();
+    }
   }
 
   function setSharePreview(open) {
     shareOverlayEl.classList.toggle("isOn", open);
     shareOverlayEl.setAttribute("aria-hidden", String(!open));
+  }
+
+  function updateStats() {
+    const count = records.length;
+    statsCountEl.textContent = count;
+    
+    // 添加数字跳动动画
+    statsCountEl.classList.add('statsBounce');
+    setTimeout(() => {
+      statsCountEl.classList.remove('statsBounce');
+    }, 300);
+  }
+
+  function showSaveSuccess() {
+    const toast = document.createElement('div');
+    toast.className = 'saveSuccessToast';
+    toast.textContent = '✅ 保存成功';
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('saveSuccessShow');
+    }, 10);
+    
+    setTimeout(() => {
+      toast.classList.remove('saveSuccessShow');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 1500);
+  }
+
+  function triggerCelebration() {
+    const overlay = document.createElement('div');
+    overlay.className = 'celebrationOverlay';
+    document.body.appendChild(overlay);
+    
+    // 创建庆祝消息
+    const message = document.createElement('div');
+    message.className = 'celebrationMessage';
+    message.innerHTML = '🎉 收集进度达成！<br>⭐⭐⭐⭐⭐';
+    overlay.appendChild(message);
+    
+    // 创建多个星星
+    for (let i = 0; i < 20; i++) {
+      const star = document.createElement('div');
+      star.className = 'celebrationStar';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 0.5 + 's';
+      star.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+      star.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+      overlay.appendChild(star);
+    }
+    
+    // 3秒后移除
+    setTimeout(() => {
+      overlay.classList.add('celebrationFade');
+      setTimeout(() => {
+        document.body.removeChild(overlay);
+      }, 500);
+    }, 3000);
   }
 
   function revokeThumbs() {
@@ -894,6 +965,20 @@ export function createMapView(root, { toast, navigate }) {
       firstSavedAt,
     });
     records = records.map((x) => (x.id === next.id ? next : x));
+    
+    // 更新统计
+    updateStats();
+    
+    // 检查是否达到5个新记录，触发庆祝动画
+    const currentCount = records.length;
+    if (currentCount > 0 && currentCount % 5 === 0 && currentCount !== lastRecordCount) {
+      triggerCelebration();
+    }
+    lastRecordCount = currentCount;
+    
+    // 显示保存成功提示
+    showSaveSuccess();
+    
     await refreshRecordsPanel();
     await runStampCelebration();
   }
