@@ -1,5 +1,5 @@
 import { addImage, deleteImage, deleteRecord, getImages, listRecords, putRecord } from "./db.js"
-import { compressImage, debounce, fmtTime, fmtDate, createPokeballIcon, countries, provinces } from "./utils.js"
+import { compressImage, debounce, fmtTime, fmtDate, createPokeballIcon, createMasterballIcon, countries, provinces } from "./utils.js"
 import { icon } from "./icons.js";
 
 export function createMapView(root, { toast, navigate }) {
@@ -79,8 +79,27 @@ export function createMapView(root, { toast, navigate }) {
         <div class="actions">
           <button class="btn btnDanger" data-delete type="button">${icon("trash")}删除</button>
           <div class="footerGroup">
+            <button class="btn" data-change-marker type="button">${icon("pin")}更改标记</button>
             <button class="btn" data-close type="button">${icon("close")}关闭</button>
             <button class="btn btnPrimary" data-save type="button">保存</button>
+          </div>
+        </div>
+      </div>
+      <div class="markerStyleOverlay" data-marker-overlay>
+        <div class="markerStylePanel">
+          <div class="markerStyleHeader">
+            <div class="markerStyleTitle">选择标记样式</div>
+            <button class="markerStyleClose" data-marker-close type="button">${icon("close")}</button>
+          </div>
+          <div class="markerStyleList">
+            <button class="markerStyleItem" data-marker-style="pokeball" type="button">
+              <div class="markerStylePreview" data-preview-pokeball></div>
+              <div class="markerStyleName">精灵球</div>
+            </button>
+            <button class="markerStyleItem" data-marker-style="masterball" type="button">
+              <div class="markerStylePreview" data-preview-masterball></div>
+              <div class="markerStyleName">大师球</div>
+            </button>
           </div>
         </div>
       </div>
@@ -160,6 +179,11 @@ export function createMapView(root, { toast, navigate }) {
   const statsPanelEl = root.querySelector("[data-stats-panel]");
   const statsCountEl = root.querySelector("[data-stats-count]");
 
+  const changeMarkerBtn = root.querySelector("[data-change-marker]");
+  const markerOverlayEl = root.querySelector("[data-marker-overlay]");
+  const markerCloseBtn = root.querySelector("[data-marker-close]");
+  const markerStyleListEl = root.querySelector(".markerStyleList");
+
   let map = null;
   let geocoder = null;
   let geolocation = null;
@@ -172,7 +196,8 @@ export function createMapView(root, { toast, navigate }) {
   let recordsOpen = false;
   let sortDir = "desc";
   let collapsedGroups = new Set();
-  let stampIcon = null;
+  let pokeballIcon = null;
+  let masterballIcon = null;
   let currentShareCanvas = null;
   let currentShareRecord = null;
   let batchMode = false;
@@ -326,7 +351,23 @@ export function createMapView(root, { toast, navigate }) {
     if (map) return;
     if (!window.BMap) throw new Error("百度地图脚本未加载");
 
-    stampIcon = createPokeballIcon(32);
+    pokeballIcon = createPokeballIcon(32);
+    masterballIcon = createMasterballIcon(32);
+
+    const previewPokeballEl = root.querySelector("[data-preview-pokeball]");
+    const previewMasterballEl = root.querySelector("[data-preview-masterball]");
+    if (previewPokeballEl) {
+      const img = document.createElement("img");
+      img.src = pokeballIcon;
+      img.alt = "精灵球";
+      previewPokeballEl.appendChild(img);
+    }
+    if (previewMasterballEl) {
+      const img = document.createElement("img");
+      img.src = masterballIcon;
+      img.alt = "大师球";
+      previewMasterballEl.appendChild(img);
+    }
 
     map = new BMap.Map("map");
     const point = new BMap.Point(116.404, 39.915);
@@ -403,11 +444,15 @@ export function createMapView(root, { toast, navigate }) {
   function placeMarker(rec) {
     if (!map) return;
     const exist = markers.get(rec.id);
-    if (exist) return;
+    if (exist) {
+      updateMarkerStyle(rec);
+      return;
+    }
     
     try {
       const point = new BMap.Point(rec.lng, rec.lat);
-      const markerIcon = new BMap.Icon(stampIcon, new BMap.Size(32, 32), {
+      const iconUrl = rec.markerStyle === "masterball" ? masterballIcon : pokeballIcon;
+      const markerIcon = new BMap.Icon(iconUrl, new BMap.Size(32, 32), {
         anchor: new BMap.Size(16, 16)
       });
       
@@ -423,6 +468,19 @@ export function createMapView(root, { toast, navigate }) {
     } catch (err) {
       console.error("创建标记失败:", err);
     }
+  }
+
+  function updateMarkerStyle(rec) {
+    if (!map) return;
+    const marker = markers.get(rec.id);
+    if (!marker) return;
+    
+    const iconUrl = rec.markerStyle === "masterball" ? masterballIcon : pokeballIcon;
+    const markerIcon = new BMap.Icon(iconUrl, new BMap.Size(32, 32), {
+      anchor: new BMap.Size(16, 16)
+    });
+    
+    marker.setIcon(markerIcon);
   }
 
   async function syncMarkers() {
@@ -1356,6 +1414,38 @@ export function createMapView(root, { toast, navigate }) {
     stampCloseBtn.addEventListener('click', () => closeStampOverlay());
     stampOverlayEl.addEventListener('click', (e) => {
       if (e.target === stampOverlayEl) closeStampOverlay();
+    });
+
+    changeMarkerBtn.addEventListener('click', () => {
+      markerOverlayEl.classList.add('isOn');
+    });
+
+    markerCloseBtn.addEventListener('click', () => {
+      markerOverlayEl.classList.remove('isOn');
+    });
+
+    markerOverlayEl.addEventListener('click', (e) => {
+      if (e.target === markerOverlayEl) {
+        markerOverlayEl.classList.remove('isOn');
+      }
+    });
+
+    markerStyleListEl.addEventListener('click', async (e) => {
+      const item = e.target.closest('[data-marker-style]');
+      if (!item) return;
+      
+      const style = item.getAttribute('data-marker-style');
+      const record = await getById(activeId);
+      if (!record) return;
+      
+      record.markerStyle = style;
+      await putRecord(record);
+      
+      records = records.map((r) => (r.id === record.id ? record : r));
+      updateMarkerStyle(record);
+      
+      markerOverlayEl.classList.remove('isOn');
+      toast('标记样式已更新');
     });
   }
 

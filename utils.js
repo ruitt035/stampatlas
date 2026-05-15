@@ -79,6 +79,92 @@ export function createPokeballIcon(size = 32) {
   return canvas.toDataURL("image/png")
 }
 
+export function createMasterballIcon(size = 32) {
+  const canvas = document.createElement("canvas")
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext("2d")
+  const center = size / 2
+  const outerRadius = size / 2 - 1
+  
+  // 像素大小
+  const pixelSize = Math.max(2, Math.floor(size / 12))
+  
+  // 绘制像素风格的大师球（紫色、粉色、白色）
+  for (let y = 0; y < size; y += pixelSize) {
+    for (let x = 0; x < size; x += pixelSize) {
+      const dx = x - center
+      const dy = y - center
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      
+      if (distance <= outerRadius) {
+        // 上半部分 - 紫色，下半部分 - 白色
+        ctx.fillStyle = dy < 0 ? "#7B2CBF" : "#FFFFFF"
+        ctx.fillRect(x, y, pixelSize, pixelSize)
+      }
+    }
+  }
+  
+  // 黑色分割线（像素风格）
+  const lineY = center
+  ctx.fillStyle = "#333333"
+  ctx.fillRect(0, lineY - pixelSize / 2, size, pixelSize)
+  
+  // 中心按钮（像素风格）
+  const buttonSize = Math.floor(size * 0.3)
+  
+  // 按钮外圈 - 黑色
+  ctx.fillStyle = "#333333"
+  ctx.beginPath()
+  ctx.arc(center, center, buttonSize / 2 + 1, 0, Math.PI * 2)
+  ctx.fill()
+  
+  // 按钮内圈 - 白色
+  ctx.fillStyle = "#FFFFFF"
+  ctx.beginPath()
+  ctx.arc(center, center, buttonSize / 2 - 1, 0, Math.PI * 2)
+  ctx.fill()
+  
+  // 按钮中心 - 浅紫
+  ctx.fillStyle = "#9B59B6"
+  ctx.beginPath()
+  ctx.arc(center, center, buttonSize / 4, 0, Math.PI * 2)
+  ctx.fill()
+  
+  // 绘制粉色装饰圆点（大师球特征）
+  const dotRadius = Math.floor(size * 0.12)
+  const dotOffset = Math.floor(size * 0.22)
+  
+  ctx.fillStyle = "#FF6B9D"
+  ctx.beginPath()
+  ctx.arc(center - dotOffset, center - dotOffset / 2, dotRadius, 0, Math.PI * 2)
+  ctx.fill()
+  
+  ctx.beginPath()
+  ctx.arc(center + dotOffset, center - dotOffset / 2, dotRadius, 0, Math.PI * 2)
+  ctx.fill()
+  
+  // 粉色圆点边框
+  ctx.strokeStyle = "#333333"
+  ctx.lineWidth = pixelSize / 2
+  ctx.beginPath()
+  ctx.arc(center - dotOffset, center - dotOffset / 2, dotRadius - pixelSize / 2, 0, Math.PI * 2)
+  ctx.stroke()
+  
+  ctx.beginPath()
+  ctx.arc(center + dotOffset, center - dotOffset / 2, dotRadius - pixelSize / 2, 0, Math.PI * 2)
+  ctx.stroke()
+  
+  // 轮廓线（像素风格黑色边框）
+  ctx.strokeStyle = "#333333"
+  ctx.lineWidth = pixelSize
+  ctx.beginPath()
+  ctx.arc(center, center, outerRadius - pixelSize / 2, 0, Math.PI * 2)
+  ctx.stroke()
+  
+  return canvas.toDataURL("image/png")
+}
+
 // 保留旧函数名作为别名
 export function createStampIcon(size = 32, color = "#FF4757") {
   return createPokeballIcon(size)

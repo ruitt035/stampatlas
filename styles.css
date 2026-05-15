@@ -1468,3 +1468,128 @@ html, body {
   font-weight: bold;
   font-family: var(--font-mono);
 }
+
+/* 标记样式选择面板 */
+.markerStyleOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  background: rgba(0,0,0,0.5);
+}
+
+.markerStyleOverlay.isOn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markerStylePanel {
+  position: relative;
+  width: min(360px, calc(100% - 32px));
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-white);
+  box-shadow: 8px 8px 0 var(--pk-dark);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.markerStyleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 3px dashed var(--pk-gray);
+}
+
+.markerStyleTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+}
+
+.markerStyleClose {
+  width: 32px;
+  height: 32px;
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-white);
+  color: var(--pk-dark);
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 3px 3px 0 var(--pk-dark);
+  display: grid;
+  place-items: center;
+}
+
+.markerStyleClose:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--pk-dark);
+  background: var(--pk-red);
+  color: var(--pk-white);
+}
+
+.markerStyleClose:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pk-dark);
+}
+
+.markerStyleList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.markerStyleItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-light-gray);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 3px 3px 0 var(--pk-dark);
+}
+
+.markerStyleItem:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--pk-dark);
+  background: var(--pk-yellow);
+}
+
+.markerStyleItem:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pk-dark);
+}
+
+.markerStylePreview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--pk-dark);
+  background: var(--pk-white);
+  display: grid;
+  place-items: center;
+}
+
+.markerStylePreview img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.markerStyleName {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+}
