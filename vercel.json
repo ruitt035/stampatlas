@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "**/*",
+      "src": "**/*.{html,css,js,png,jpg,jpeg,gif,ico,svg,json}",
       "use": "@vercel/static"
     }
   ],
@@ -27,6 +27,10 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
     }
