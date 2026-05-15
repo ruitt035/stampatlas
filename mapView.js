@@ -16,10 +16,7 @@ export function createMapView(root, { toast, navigate }) {
       <div class="recordsBackdrop" data-records-backdrop></div>
       <div class="recordsPanel" data-records-panel aria-hidden="true">
         <div class="recordsHeader">
-          <div class="metaLine">
           <div class="hTitle">盖章记录</div>
-          <div class="hint" data-hint>点击地图添加标记</div>
-          </div>
           <div class="recordsHeaderActions" data-normal-actions>
             <button class="btn btnTight" data-sort type="button" title="时间排序">${icon("sort")}<span data-sort-label></span></button>
             <select class="selectTight" data-group title="分类">
@@ -152,7 +149,6 @@ export function createMapView(root, { toast, navigate }) {
 
   const normalActionsEl = root.querySelector("[data-normal-actions]");
   const batchActionsEl = root.querySelector("[data-batch-actions]");
-  const hintEl = root.querySelector("[data-hint]");
   const batchCountEl = root.querySelector("[data-batch-count]");
   const batchDeleteBtn = root.querySelector("[data-batch-delete]");
   const deleteSelectedBtn = root.querySelector("[data-delete-selected]");
@@ -1172,7 +1168,6 @@ export function createMapView(root, { toast, navigate }) {
       }
       normalActionsEl.style.display = enabled ? 'none' : 'flex';
       batchActionsEl.style.display = enabled ? 'flex' : 'none';
-      hintEl.textContent = enabled ? '勾选要删除的记录' : '点击地图添加标记';
       refreshRecordsPanel();
     }
 

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/sarasa-mono-sc@latest/400.css');
 
 :root {
   --pk-red: #FF4757;
@@ -15,7 +16,9 @@
   --pk-shadow: 4px 4px 0px var(--pk-dark);
   --pk-radius: 8px;
   
-  --font: "Press Start 2P", "Courier New", "Microsoft YaHei", sans-serif;
+  --font-pixel: "Press Start 2P", monospace;
+  --font-mono: "Sarasa Mono SC", "Cascadia Code", "Source Han Mono SC", monospace;
+  --font: var(--font-pixel);
 }
 
 * {
@@ -355,6 +358,7 @@ html, body {
 .recordsFilters {
   display: flex;
   gap: 10px;
+  font-family: var(--font-mono);
 }
 
 .recordsList {
@@ -363,6 +367,7 @@ html, body {
   border: 2px solid var(--pk-gray);
   border-radius: var(--pk-radius);
   background: var(--pk-light-gray);
+  font-family: var(--font-mono);
 }
 
 .group {
@@ -382,8 +387,7 @@ html, body {
   border: none;
   background: linear-gradient(180deg, var(--pk-yellow) 0%, #FFA500 100%);
   cursor: pointer;
-  font-weight: bold;
-  color: var(--pk-dark);
+  font-family: var(--font-mono);
 }
 
 .groupHead:hover {
@@ -471,6 +475,7 @@ html, body {
   outline: none;
   font-size: 11px;
   font-weight: bold;
+  font-family: var(--font-mono);
 }
 
 .list {
@@ -503,11 +508,13 @@ html, body {
   font-weight: bold;
   color: var(--pk-dark);
   line-height: 1.4;
+  font-family: var(--font-mono);
 }
 
 .rowSub {
   font-size: 11px;
   color: var(--pk-gray);
+  font-family: var(--font-mono);
 }
 
 .rowThumbs {
