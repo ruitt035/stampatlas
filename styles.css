@@ -445,7 +445,31 @@ html, body {
   min-width: auto !important;
 }
 
+/* 保存成功提示 */
+.saveSuccessToast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  padding: 16px 32px;
+  background: linear-gradient(135deg, var(--pk-white) 0%, #F0F0F0 100%);
+  border: 4px solid var(--pk-dark);
+  border-radius: var(--pk-radius);
+  box-shadow: 6px 6px 0 var(--pk-dark);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 10000;
+  pointer-events: none;
+}
 
+.saveSuccessShow {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
 
 /* 庆祝动画 */
 .celebrationOverlay {
@@ -1213,258 +1237,4 @@ html, body {
 .titleEditInput:focus {
   border-color: var(--pk-red);
   box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
-}
-
-/* 日历面板样式 */
-.calendarBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  display: none;
-  background: rgba(0,0,0,0.5);
-}
-
-.calendarBackdrop.isOpen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendarPanel {
-  position: relative;
-  width: min(420px, calc(100% - 32px));
-  border: var(--pk-border);
-  border-radius: var(--pk-radius);
-  background: var(--pk-white);
-  box-shadow: 8px 8px 0 var(--pk-dark);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.calendarHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 3px dashed var(--pk-gray);
-}
-
-.calendarTitle {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--pk-dark);
-  font-family: var(--font-mono);
-}
-
-.calendarNav {
-  display: flex;
-  gap: 8px;
-}
-
-.calendarNavBtn {
-  width: 36px;
-  height: 36px;
-  border: var(--pk-border);
-  border-radius: var(--pk-radius);
-  background: var(--pk-white);
-  color: var(--pk-dark);
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  box-shadow: 3px 3px 0 var(--pk-dark);
-  display: grid;
-  place-items: center;
-}
-
-.calendarNavBtn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--pk-dark);
-  background: var(--pk-yellow);
-}
-
-.calendarNavBtn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 2px 2px 0 var(--pk-dark);
-}
-
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-
-.calendarWeekday {
-  height: 32px;
-  display: grid;
-  place-items: center;
-  font-size: 10px;
-  font-weight: bold;
-  color: var(--pk-gray);
-  text-transform: uppercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.5px;
-}
-
-.calendarDay {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--pk-dark);
-  border: 2px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: var(--font-mono);
-  position: relative;
-}
-
-.calendarDay:hover {
-  background: var(--pk-yellow);
-  border-color: var(--pk-dark);
-}
-
-.calendarDay.otherMonth {
-  color: var(--pk-gray);
-  opacity: 0.5;
-}
-
-.calendarDay.hasStamp {
-  background: rgba(255, 71, 87, 0.35);
-  border-color: rgba(255, 71, 87, 0.6);
-}
-
-.calendarDay.hasStamp::before {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  width: 8px;
-  height: 8px;
-  background: var(--pk-red);
-  border: 2px solid var(--pk-dark);
-  border-radius: 50%;
-}
-
-.calendarDay.today {
-  background: var(--pk-yellow);
-  border-color: var(--pk-dark);
-  box-shadow: inset 0 0 0 2px var(--pk-yellow), 2px 2px 0 rgba(0,0,0,0.1);
-}
-
-.calendarDay.today.hasStamp {
-  background: linear-gradient(135deg, rgba(255, 71, 87, 0.4) 0%, rgba(255, 215, 0, 0.8) 100%);
-}
-
-/* 日历详情弹窗 */
-.calendarDetailOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: none;
-  background: rgba(0,0,0,0.6);
-}
-
-.calendarDetailOverlay.isOpen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendarDetailPanel {
-  position: relative;
-  width: min(400px, calc(100% - 32px));
-  max-height: 70vh;
-  border: var(--pk-border);
-  border-radius: var(--pk-radius);
-  background: var(--pk-white);
-  box-shadow: 8px 8px 0 var(--pk-dark);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.calendarDetailHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 3px dashed var(--pk-gray);
-}
-
-.calendarDetailTitle {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--pk-dark);
-  font-family: var(--font-mono);
-}
-
-.calendarDetailClose {
-  width: 32px;
-  height: 32px;
-  border: var(--pk-border);
-  border-radius: var(--pk-radius);
-  background: var(--pk-white);
-  color: var(--pk-dark);
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  box-shadow: 3px 3px 0 var(--pk-dark);
-  display: grid;
-  place-items: center;
-}
-
-.calendarDetailClose:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--pk-dark);
-  background: var(--pk-red);
-  color: var(--pk-white);
-}
-
-.calendarDetailClose:active {
-  transform: translate(1px, 1px);
-  box-shadow: 2px 2px 0 var(--pk-dark);
-}
-
-.calendarDetailList {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.calendarDetailItem {
-  padding: 12px;
-  border: 2px solid var(--pk-gray);
-  border-radius: var(--pk-radius);
-  background: var(--pk-light-gray);
-}
-
-.calendarDetailItemTitle {
-  font-size: 13px;
-  font-weight: bold;
-  color: var(--pk-dark);
-  margin-bottom: 4px;
-  font-family: var(--font-mono);
-}
-
-.calendarDetailItemLocation {
-  font-size: 11px;
-  color: var(--pk-gray);
-  font-family: var(--font-mono);
-}
-
-.calendarDetailEmpty {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--pk-gray);
-  font-size: 12px;
-  font-weight: bold;
-  font-family: var(--font-mono);
 }

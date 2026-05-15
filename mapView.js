@@ -216,7 +216,23 @@ export function createMapView(root, { toast, navigate }) {
     }, 300);
   }
 
-
+  function showSaveSuccess() {
+    const toast = document.createElement('div');
+    toast.className = 'saveSuccessToast';
+    toast.textContent = '✅ 保存成功';
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('saveSuccessShow');
+    }, 10);
+    
+    setTimeout(() => {
+      toast.classList.remove('saveSuccessShow');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 1500);
+  }
 
   function triggerCelebration() {
     const overlay = document.createElement('div');
@@ -959,6 +975,9 @@ export function createMapView(root, { toast, navigate }) {
       triggerCelebration();
     }
     lastRecordCount = currentCount;
+    
+    // 显示保存成功提示
+    showSaveSuccess();
     
     await refreshRecordsPanel();
     await runStampCelebration();
