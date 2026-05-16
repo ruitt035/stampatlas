@@ -16,12 +16,11 @@ appEl.innerHTML = `
         <button class="btn btnPrimary" data-nav="map" title="地图">${icon("pin")}地图</button>
         <button class="btn" data-nav="calendar" title="日历">${icon("calendar")}日历</button>
         <button class="btn" data-nav="locate" title="定位">${icon("locate")}定位</button>
-        <button class="btn" data-nav="settings" title="设置">${icon("settings")}设置</button>
       </div>
     </div>
     <div class="content">
         <div id="view-map" class="view"></div>
-        <div id="view-settings" class="view"></div>
+        <div id="view-settings"></div>
         <div id="view-calendar"></div>
         <div id="toast" class="toast"></div>
       </div>
@@ -42,8 +41,10 @@ const mapRoot = document.getElementById("view-map")
 const settingsRoot = document.getElementById("view-settings")
 const calendarRoot = document.getElementById("view-calendar")
 
-const mapView = createMapView(mapRoot, { toast, navigate })
-const settingsView = createSettingsView(settingsRoot, { toast, navigate })
+const mapView = createMapView(mapRoot, { toast, navigate, openSettings })
+const settingsView = createSettingsView(settingsRoot, { toast, onDataCleared: () => {
+  mapView.clearAllMarkers()
+} })
 const calendarView = createCalendarView(calendarRoot)
 
 function setActive(name) {
@@ -62,14 +63,13 @@ function navigate(name) {
   location.hash = name === "map" ? "#/" : `#/${name}`
 }
 
+function openSettings() {
+  settingsView.open()
+}
+
 async function syncViews(route) {
-  if (route === "settings") {
-    setActive("settings")
-    await settingsView.onShow()
-  } else {
-    setActive("map")
-    await mapView.onShow()
-  }
+  setActive("map")
+  await mapView.onShow()
 }
 
 function handleNavClick(name) {
@@ -77,14 +77,12 @@ function handleNavClick(name) {
     calendarView.open()
   } else if (name === "locate") {
     mapView.locateAndAddMarker()
-  } else {
+  } else if (name === "map") {
     navigate(name)
   }
 }
 
 function routeFromHash() {
-  const h = (location.hash || "#/").replace(/^#\//, "")
-  if (h.startsWith("settings")) return "settings"
   return "map"
 }
 

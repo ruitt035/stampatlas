@@ -1,88 +1,84 @@
 import { clearAll, exportJson, importJson } from "./db.js"
 import { icon } from "./icons.js"
 
-export function createSettingsView(root, { toast, navigate }) {
+export function createSettingsView(root, { toast, onDataCleared }) {
   root.innerHTML = `
-    <div class="page">
-      <div class="pageBody">
-        <div class="panel" style="display:flex; flex-direction:column; gap:14px">
-          <div class="panelTitle">
-            <div>
-              <h1>设置</h1>
-              <p>数据仅保存在本机浏览器（IndexedDB），不上传服务器</p>
-            </div>
+    <div class="settingsOverlay" data-settings-overlay>
+      <div class="settingsModal">
+        <div class="settingsHeader">
+          <div class="settingsTitle">系统设置</div>
+          <button class="settingsClose" data-settings-close type="button">${icon("close")}</button>
+        </div>
+        <div class="settingsContent">
+          <div class="settingsNote">
+            <p>数据仅保存在本机浏览器（IndexedDB），不上传服务器</p>
           </div>
 
-          <div class="panel" style="box-shadow:none; background:rgba(244,246,251,.55)">
-            <div class="panelTitle" style="margin-bottom:8px">
-              <div>
-                <h1 style="font-size:12px">数据导出</h1>
-                <p>用于备份或迁移到另一台设备</p>
-              </div>
-            </div>
-            <div class="footerGroup" style="justify-content:space-between">
+          <div class="settingsSection">
+            <div class="settingsSectionTitle">数据导出</div>
+            <p class="settingsHint">用于备份或迁移到另一台设备</p>
+            <div class="settingsRow">
               <button class="btn btnPrimary" data-json-export type="button">${icon("export")}导出 JSON</button>
-              <div class="fine">图片将以内嵌方式导出，文件可能较大</div>
+              <span class="settingsFine">图片将以内嵌方式导出，文件可能较大</span>
             </div>
           </div>
 
-          <div class="panel" style="box-shadow:none; background:rgba(244,246,251,.55)">
-            <div class="panelTitle" style="margin-bottom:8px">
-              <div>
-                <h1 style="font-size:12px">数据导入</h1>
-                <p>从导出的 JSON 恢复；可选择合并或覆盖</p>
-              </div>
-            </div>
-            <div class="footerGroup" style="justify-content:space-between">
-              <div class="footerGroup">
-                <select data-import-mode>
-                  <option value="merge">合并（推荐）</option>
-                  <option value="replace">覆盖</option>
-                </select>
-                <label class="btn" style="cursor:pointer">
-                  ${icon("image")}选择文件
-                  <input data-json-file type="file" accept="application/json" style="display:none" />
-                </label>
-              </div>
+          <div class="settingsSection">
+            <div class="settingsSectionTitle">数据导入</div>
+            <p class="settingsHint">从导出的 JSON 恢复；可选择合并或覆盖</p>
+            <div class="settingsRow">
+              <select data-import-mode>
+                <option value="merge">合并（推荐）</option>
+                <option value="replace">覆盖</option>
+              </select>
+              <label class="btn" style="cursor:pointer">
+                ${icon("image")}选择文件
+                <input data-json-file type="file" accept="application/json" style="display:none" />
+              </label>
               <button class="btn" data-json-import type="button">导入</button>
             </div>
-            <div class="fine" data-import-name style="margin-top:8px"></div>
+            <div class="settingsFileName" data-import-name></div>
           </div>
 
-          <div class="panel" style="box-shadow:none; background:rgba(244,246,251,.55)">
-            <div class="panelTitle" style="margin-bottom:8px">
-              <div>
-                <h1 style="font-size:12px">清空本地数据</h1>
-                <p>不可恢复，请谨慎</p>
-              </div>
-            </div>
-            <div class="footerGroup" style="justify-content:space-between">
+          <div class="settingsSection">
+            <div class="settingsSectionTitle">清空本地数据</div>
+            <p class="settingsHint">不可恢复，请谨慎</p>
+            <div class="settingsRow">
               <button class="btn btnDanger" data-clear type="button">${icon("trash")}清空</button>
-              <div class="fine">建议先导出备份</div>
+              <span class="settingsFine">建议先导出备份</span>
             </div>
           </div>
 
-          <div class="fine" style="line-height:1.65">
+          <div class="settingsPrivacy">
             隐私说明：本应用不包含登录、不收集个人信息、不向服务器发送记录与图片。你添加的坐标与文字、图片仅存储在浏览器本地数据库中；清理浏览器数据可能导致记录被删除。
           </div>
+
+          <div class="settingsFooter">
+            <span class="settingsFine">若导入/导出失败，尝试换用桌面浏览器操作</span>
+          </div>
         </div>
-      </div>
-      <div class="pageFooter">
-        <div class="fine">若导入/导出失败，尝试换用桌面浏览器操作</div>
-        <button class="btn" type="button" data-back>${icon("pin")}返回地图</button>
       </div>
     </div>
   `
 
+  const overlayEl = root.querySelector("[data-settings-overlay]")
+  const closeBtn = root.querySelector("[data-settings-close]")
   const exportBtn = root.querySelector("[data-json-export]")
   const fileEl = root.querySelector("[data-json-file]")
   const importBtn = root.querySelector("[data-json-import]")
   const importNameEl = root.querySelector("[data-import-name]")
   const modeEl = root.querySelector("[data-import-mode]")
   const clearBtn = root.querySelector("[data-clear]")
-  const backBtn = root.querySelector("[data-back]")
 
   let pendingFile = null
+
+  function open() {
+    overlayEl.classList.add("isOpen")
+  }
+
+  function close() {
+    overlayEl.classList.remove("isOpen")
+  }
 
   exportBtn.addEventListener("click", async () => {
     try {
@@ -135,6 +131,9 @@ export function createSettingsView(root, { toast, navigate }) {
     try {
       await clearAll()
       toast("已清空")
+      if (onDataCleared) {
+        onDataCleared()
+      }
     } catch (_) {
       toast("清空失败")
     } finally {
@@ -142,11 +141,17 @@ export function createSettingsView(root, { toast, navigate }) {
     }
   })
 
-  backBtn.addEventListener("click", () => navigate("map"))
+  closeBtn.addEventListener("click", close)
+  overlayEl.addEventListener("click", (e) => {
+    if (e.target === overlayEl) {
+      close()
+    }
+  })
 
   return {
+    open,
+    close,
     async onShow() {
     },
   }
 }
-

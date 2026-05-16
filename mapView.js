@@ -2,7 +2,7 @@ import { addImage, deleteImage, deleteRecord, getImages, listRecords, putRecord 
 import { compressImage, debounce, fmtTime, fmtDate, createPokeballIcon, createMasterballIcon, countries, provinces } from "./utils.js"
 import { icon } from "./icons.js";
 
-export function createMapView(root, { toast, navigate }) {
+export function createMapView(root, { toast, navigate, openSettings }) {
   root.innerHTML = `
     <div class="mapLayout">
       <div id="map"></div>
@@ -39,6 +39,7 @@ export function createMapView(root, { toast, navigate }) {
         </div>
         <div class="recordsFilters">
           <input class="search" data-records-search placeholder="搜索记录" />
+          <button class="btn btnTight btnSmall settingsInlineBtn" data-open-settings type="button" title="系统设置">${icon("settings")}</button>
         </div>
         <div class="list recordsList" data-records-list role="list"></div>
       </div>
@@ -183,6 +184,8 @@ export function createMapView(root, { toast, navigate }) {
   const markerOverlayEl = root.querySelector("[data-marker-overlay]");
   const markerCloseBtn = root.querySelector("[data-marker-close]");
   const markerStyleListEl = root.querySelector(".markerStyleList");
+
+  const openSettingsBtn = root.querySelector("[data-open-settings]");
 
   let map = null;
   let geocoder = null;
@@ -1379,6 +1382,12 @@ export function createMapView(root, { toast, navigate }) {
 
     recordsSearchEl.addEventListener('input', debounce(refreshRecordsPanel, 180));
 
+    openSettingsBtn.addEventListener('click', () => {
+      if (openSettings) {
+        openSettings();
+      }
+    });
+
     mapSearchEl.addEventListener('input', debounce(() => searchPlace(mapSearchEl.value), 260));
     mapSearchEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -1494,6 +1503,15 @@ export function createMapView(root, { toast, navigate }) {
     }
   }
 
+  function clearAllMarkers() {
+    markers.forEach((marker) => {
+      if (map) {
+        map.removeOverlay(marker)
+      }
+    })
+    markers.clear()
+  }
+
   return {
     async onShow() {
       await ensureMap();
@@ -1502,6 +1520,7 @@ export function createMapView(root, { toast, navigate }) {
       if (!drawerOpen) setDrawer(false);
     },
     locateAndAddMarker,
+    clearAllMarkers,
   };
 }
 

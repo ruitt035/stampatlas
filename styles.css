@@ -1593,3 +1593,160 @@ html, body {
   color: var(--pk-dark);
   font-family: var(--font-mono);
 }
+
+/* 设置弹窗样式 */
+.settingsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+}
+
+.settingsOverlay.isOpen {
+  display: flex;
+}
+
+.settingsModal {
+  width: min(420px, calc(100% - 32px));
+  max-height: 85vh;
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-white);
+  box-shadow: 8px 8px 0 var(--pk-dark);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.settingsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 3px dashed var(--pk-gray);
+  background: var(--pk-light-gray);
+}
+
+.settingsTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+}
+
+.settingsClose {
+  width: 32px;
+  height: 32px;
+  border: var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-white);
+  color: var(--pk-dark);
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 3px 3px 0 var(--pk-dark);
+  display: grid;
+  place-items: center;
+}
+
+.settingsClose:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--pk-dark);
+  background: var(--pk-red);
+  color: var(--pk-white);
+}
+
+.settingsClose:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pk-dark);
+}
+
+.settingsContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settingsNote {
+  padding: 12px;
+  background: var(--pk-yellow);
+  border: 2px solid var(--pk-dark);
+  border-radius: var(--pk-radius);
+  font-size: 11px;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+.settingsSection {
+  padding: 14px;
+  background: var(--pk-light-gray);
+  border: 2px solid var(--pk-gray);
+  border-radius: var(--pk-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settingsSectionTitle {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+}
+
+.settingsHint {
+  font-size: 11px;
+  color: var(--pk-gray);
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settingsFine {
+  font-size: 10px;
+  color: var(--pk-gray);
+  font-family: var(--font-mono);
+}
+
+.settingsFileName {
+  font-size: 11px;
+  color: var(--pk-dark);
+  font-family: var(--font-mono);
+  margin-top: 4px;
+}
+
+.settingsPrivacy {
+  font-size: 11px;
+  color: var(--pk-gray);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  padding: 12px;
+  background: var(--pk-light-gray);
+  border: 2px dashed var(--pk-gray);
+  border-radius: var(--pk-radius);
+}
+
+.settingsFooter {
+  text-align: center;
+  padding-top: 8px;
+}
+
+/* 侧栏内联系统设置按钮 */
+.settingsInlineBtn {
+  flex-shrink: 0;
+}
+
