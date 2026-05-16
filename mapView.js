@@ -1451,6 +1451,49 @@ export function createMapView(root, { toast, navigate }) {
 
   bind();
 
+  async function locateAndAddMarker() {
+    await ensureMap();
+    if (!map || !geolocation) {
+      toast('地图未初始化');
+      return;
+    }
+
+    try {
+      geolocation.getCurrentPosition(async function(result) {
+        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+          const point = result.point;
+          map.panTo(point);
+          map.setZoom(14);
+
+          const now = new Date();
+          const defaultTitle = `未命名 ${fmtDate(now.toISOString())}`;
+
+          await putRecord({
+            lng: point.lng,
+            lat: point.lat,
+            title: defaultTitle,
+            note: "",
+            address: "",
+            country: "",
+            province: "",
+            city: "",
+            imageIds: [],
+            theme: "purple",
+            markerStyle: "pokeball",
+            firstSavedAt: "",
+            createdAt: now.toISOString(),
+          });
+
+          toast('已定位并添加标记');
+        } else {
+          toast('定位失败（请检查定位权限）');
+        }
+      }, { enableHighAccuracy: true });
+    } catch (err) {
+      toast('定位失败（请检查定位权限）');
+    }
+  }
+
   return {
     async onShow() {
       await ensureMap();
@@ -1458,6 +1501,7 @@ export function createMapView(root, { toast, navigate }) {
       await syncMarkers();
       if (!drawerOpen) setDrawer(false);
     },
+    locateAndAddMarker,
   };
 }
 

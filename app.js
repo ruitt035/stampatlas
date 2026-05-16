@@ -15,6 +15,7 @@ appEl.innerHTML = `
       <div class="nav">
         <button class="btn btnPrimary" data-nav="map" title="地图">${icon("pin")}地图</button>
         <button class="btn" data-nav="calendar" title="日历">${icon("calendar")}日历</button>
+        <button class="btn" data-nav="locate" title="定位">${icon("locate")}定位</button>
         <button class="btn" data-nav="settings" title="设置">${icon("settings")}设置</button>
       </div>
     </div>
@@ -74,6 +75,8 @@ async function syncViews(route) {
 function handleNavClick(name) {
   if (name === "calendar") {
     calendarView.open()
+  } else if (name === "locate") {
+    mapView.locateAndAddMarker()
   } else {
     navigate(name)
   }
